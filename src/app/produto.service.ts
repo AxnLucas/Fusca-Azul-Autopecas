@@ -19,9 +19,13 @@ export class ProdutoService{
   constructor() {}
  
   public getProdutos(){
-    return this.produtos.sort((a, b) => a.faltaDePecas - b.faltaDePecas) 
-
+    for (let i = 0; i < this.produtos.length; i++) {
+      this.produtos[i].setColor();
+      this.produtos[i].setFaltaDePecas()
+    }
+    return this.produtos.sort((a, b) => a.faltaDePecas - b.faltaDePecas); 
   }
+  
 
   public editProduto(cod:String, produto:Produto){
     for(let i=0; i < this.produtos.length; i++){

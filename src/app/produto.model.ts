@@ -16,16 +16,31 @@ export class Produto {
         this.capMaxima = capMaxima;
         this.qtdMinima = qtdMinima;
         this.qtdAtualizar = qtdAtualizar;
-        this.faltaDePecas = this.qtdDisponivel / this.qtdMinima;
-        if (this.qtdDisponivel < this.qtdMinima ) {
+        this.setFaltaDePecas();
+        this.setColor();
+       
+    }
+    public setColor() {
+        if (this.qtdDisponivel < this.qtdMinima) {
             this.red = true;
+            this.orange = false;
         }
         else if (this.qtdDisponivel < this.capMaxima/3){
             this.orange = true;
+            this.red = false;
         }
+        else {
+            this.orange = false;
+            this.red = false;
+        }
+    }
+
+    public setFaltaDePecas() {
+        this.faltaDePecas = this.qtdDisponivel / this.qtdMinima;
+    }
     
-    } 
- }
+}
+
 
 
 

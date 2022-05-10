@@ -14,6 +14,7 @@ export class EditaProdutoComponent implements OnInit {
   public cod : string;
   public produto : Produto;
   public qtdVerificar: number;
+  public quantidade: number = 0;
   
 
   constructor(public alertCtrl: AlertController, private produtoService: ProdutoService, private route: ActivatedRoute, private router: Router) { }
@@ -31,26 +32,13 @@ export class EditaProdutoComponent implements OnInit {
     }
   }
 
-  onSubmit(form:any) {
-    this.produto.cod = form.value.cod;
-    this.produto.qtdDisponivel = form.value.qtdDisponivel;
-    this.produto.capMaxima = form.value.capMaxima;
-    this.produto.qtdMinima = form.value.qtdMinima;
-    this.produto.qtdDisponivel = form.value.qtdDisponivel;
 
-    this.produtoService.editProduto(this.cod, this.produto);
-    this.router.navigate(['/listar-produtos']);
-  }
 
   onAdd(form:any) {
-    this.produto.qtdAtualizar = form.value.qtdAtualizar;
-    this.produto.qtdDisponivel = form.value.qtdDisponivel;
-    this.produto.capMaxima = form.value.capMaxima;
-    this.qtdVerificar = this.produto.qtdDisponivel + this.produto.qtdAtualizar;
-
-    if (this.produto.qtdAtualizar === undefined) {
+    this.qtdVerificar = this.produto.qtdDisponivel + this.quantidade;
+    if (String(this.quantidade) === "") {
        const alert = this.alertCtrl.create({
-        message: 'Digite uma quantidade!',
+        message: 'Digite a quantidade!',
         subHeader: 'Atenção',
         buttons: ['Ok']
        });
@@ -58,13 +46,14 @@ export class EditaProdutoComponent implements OnInit {
     }
     else {
       if (this.qtdVerificar<=this.produto.capMaxima) {
-        this.produto.qtdDisponivel += this.produto.qtdAtualizar;
+        this.produto.qtdDisponivel += this.quantidade;
+        this.produtoService.editProduto(this.cod, this.produto);
         this.router.navigate(['/listar-produtos']);
         
       }
       else {
         const alert = this.alertCtrl.create({
-          message: 'Quantidade Excedida!',
+          message: 'Quantidade maior que o limite!',
           subHeader: 'Atenção',
           buttons: ['Ok']
          });
@@ -74,31 +63,32 @@ export class EditaProdutoComponent implements OnInit {
   }
 
   onDelete(form:any) {
-    this.produto.qtdAtualizar = form.value.qtdAtualizar;
-    this.produto.qtdDisponivel = form.value.qtdDisponivel;
-    this.qtdVerificar = this.produto.qtdDisponivel - this.produto.qtdAtualizar;
-
-    if (this.produto.qtdAtualizar === undefined) {
-      const alert = this.alertCtrl.create({
-        message: 'Digite uma quantidade!',
+    this.qtdVerificar = this.produto.qtdDisponivel - this.quantidade;
+    if (String(this.quantidade) === "") {
+       const alert = this.alertCtrl.create({
+        message: 'Digite a quantidade!',
         subHeader: 'Atenção',
         buttons: ['Ok']
        });
        alert.then(alert => alert.present());;
     }
     else {
-      if (this.qtdVerificar>this.produto.qtdMinima) {
-        this.produto.qtdDisponivel -= this.produto.qtdAtualizar;
+      if (this.qtdVerificar<=this.produto.qtdDisponivel) {
+        this.produto.qtdDisponivel -= this.quantidade;
+        this.produtoService.editProduto(this.cod, this.produto);
         this.router.navigate(['/listar-produtos']);
+        
       }
       else {
         const alert = this.alertCtrl.create({
-          message: 'Quantidade Incorreta!',
+          message: 'Quantidade Inválida!',
           subHeader: 'Atenção',
           buttons: ['Ok']
          });
          alert.then(alert => alert.present());;
       }
-    }  
-  }      
+    }
+  }
+
+   
 }
